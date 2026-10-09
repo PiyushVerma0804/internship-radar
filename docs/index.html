@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Internship Radar</title>
+<style>
+:root{
+  --bg:#f6f7fb;--card:#ffffff;--card2:#f0f2f8;--border:#e3e6ef;
+  --text:#1b1f2a;--muted:#6b7284;--accent:#3454d1;--accent2:#7c3aed;
+  --green:#1a8f5c;--gold:#b5860a;--tier1:#c2410c;--tier2:#3454d1;--red:#c0392b;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;margin:0;background:var(--bg);color:var(--text)}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+header{padding:28px 0 14px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px}
+h1{margin:0;font-size:28px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.export{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;color:var(--muted);cursor:pointer}
+.export:hover{border-color:var(--accent);color:var(--accent)}
+.brief{background:linear-gradient(135deg,#eef1fc,#f5eefc);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:8px 0 14px;font-size:14px;line-height:1.55;color:#2a2f3d}
+.brief b.t{color:var(--accent);display:block;margin-bottom:6px;font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.controls{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 88%,transparent);padding:12px 0 14px}
+.searchrow{display:flex;gap:10px;flex-wrap:wrap}
+input[type=search]{flex:1;min-width:220px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:11px 14px;font-size:14px;outline:none}
+input[type=search]:focus{border-color:var(--accent)}
+select{background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;outline:none}
+.chiprow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chiplabel{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;align-self:center;margin-right:2px;min-width:62px}
+.chip{background:var(--card);border:1px solid var(--border);border-radius:999px;color:var(--muted);padding:7px 14px;font-size:13px;cursor:pointer;user-select:none;transition:.15s}
+.chip:hover{border-color:var(--accent)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip.on.gold{background:var(--gold);border-color:var(--gold)}
+.chip.on.green{background:var(--green);border-color:var(--green)}
+.count{color:var(--muted);font-size:13px;margin:14px 2px 10px}
+.cards{display:flex;flex-direction:column;gap:12px}
+.co{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;box-shadow:0 1px 2px rgba(20,24,40,.04)}
+.co.tier1{border-left:4px solid var(--tier1)}
+.co.tier2{border-left:4px solid var(--tier2)}
+.cohead{display:flex;align-items:center;gap:8px;cursor:pointer}
+.coname{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.cocount{color:var(--muted);font-size:12.5px}
+.conew{background:rgba(26,143,92,.12);color:var(--green);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600}
+.carat{margin-left:auto;color:var(--muted);transition:.2s}
+.co.open .carat{transform:rotate(90deg)}
+.roles{display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:4px}
+.co.open .roles{display:block}
+.role{display:flex;align-items:flex-start;gap:8px;padding:9px 0;border-bottom:1px solid var(--card2)}
+.role:last-child{border-bottom:none}
+.role .main{flex:1;min-width:0}
+.role a.t{color:var(--text);font-weight:550;font-size:14px;text-decoration:none;line-height:1.4}
+.role a.t:hover{color:var(--accent)}
+.role.applied a.t{color:var(--green)}
+.rmeta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--muted);margin-top:3px}
+.badge{border-radius:6px;padding:1px 7px;font-size:10.5px;font-weight:600}
+.b-new{background:rgba(26,143,92,.12);color:var(--green)}
+.b-term{background:rgba(194,65,12,.1);color:var(--tier1)}
+.b-ml{background:rgba(124,58,237,.1);color:var(--accent2)}
+.b-tech{background:rgba(52,84,209,.1);color:var(--accent)}
+.b-type{background:var(--card2);color:var(--muted)}
+.loclist{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.locchip{background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:2px 7px;font-size:11px;color:var(--text);text-decoration:none}
+.locchip:hover{border-color:var(--accent);color:var(--accent)}
+.acts{display:flex;gap:2px;flex-shrink:0}
+.ib{background:none;border:none;font-size:15px;cursor:pointer;color:#c9cedd;padding:3px 5px;line-height:1;border-radius:6px}
+.ib:hover{background:var(--card2)}
+.ib.star.on{color:var(--gold)}
+.ib.done.on{color:var(--green)}
+.ib.hide:hover{color:var(--red)}
+.empty{color:var(--muted);text-align:center;padding:60px 0;font-size:15px}
+footer{color:var(--muted);font-size:12px;margin-top:40px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>🎯 Internship Radar</h1>
+    <div class="sub" id="sub">Loading…</div>
+  </div>
+  <button class="export" id="export">⬇ Export CSV</button>
+</header>
+<div id="brief"></div>
+<div class="controls">
+  <div class="searchrow">
+    <input type="search" id="q" placeholder="Search roles, companies… (e.g. ML, Palantir, Groww)">
+    <select id="sort">
+      <option value="score">Sort: relevance</option>
+      <option value="new">Sort: newest first</option>
+      <option value="az">Sort: A–Z</option>
+    </select>
+  </div>
+  <div class="chiprow">
+    <span class="chiplabel">Type</span>
+    <span class="chip on" data-f="rt:internship">🎓 Internships</span>
+    <span class="chip on" data-f="rt:competition">🏆 Competitions (PPO-track)</span>
+    <span class="chip" data-f="rt:fellowship">🎖 Fellowships</span>
+    <span class="chip" data-f="rt:grad">🌱 New grad / early career</span>
+  </div>
+  <div class="chiprow">
+    <span class="chiplabel">Field</span>
+    <span class="chip" data-f="cat:AI/ML">🧠 AI/ML</span>
+    <span class="chip" data-f="cat:Tech">💻 Tech/SWE</span>
+  </div>
+  <div class="chiprow">
+    <span class="chiplabel">Location</span>
+    <span class="chip" data-f="loc:blr">📍 Bangalore</span>
+    <span class="chip" data-f="loc:india">🇮🇳 India</span>
+    <span class="chip" data-f="loc:remote">🌐 Remote</span>
+    <span class="chip" data-f="loc:abroad">✈️ Abroad</span>
+  </div>
+  <div class="chiprow">
+    <span class="chiplabel">More</span>
+    <span class="chip" data-f="tier1">🔥 Top-tier only</span>
+    <span class="chip" data-f="new">✨ New today</span>
+    <span class="chip" data-f="past">📅 Include past terms (2026)</span>
+    <span class="chip gold" data-f="saved">⭐ Saved</span>
+    <span class="chip green" data-f="applied">✅ Applied</span>
+    <span class="chip" data-f="hidden">🙈 Hidden</span>
+  </div>
+</div>
+<div class="count" id="count"></div>
+<div class="cards" id="cards"></div>
+<div class="empty" id="empty" style="display:none"></div>
+<footer>Auto-updates daily 8:00 AM IST · one card per company · ⭐ save · ✅ mark applied · ✕ hide forever · competitions gated to reputed organizers</footer>
+</div>
+<script>
+let DATA={items:[]},filters=new Set(['rt:internship','rt:competition']);
+const store=n=>{try{return JSON.parse(localStorage.getItem(n)||'{}')}catch(e){return{}}};
+let saved=store('radar-saved'),applied=store('radar-applied'),hidden=store('radar-hidden');
+const persist=()=>{localStorage.setItem('radar-saved',JSON.stringify(saved));
+  localStorage.setItem('radar-applied',JSON.stringify(applied));
+  localStorage.setItem('radar-hidden',JSON.stringify(hidden))};
+const $=id=>document.getElementById(id);
+const INDIA=['india','bengaluru','bangalore','mumbai','hyderabad','pune','delhi','gurgaon','gurugram','noida','chennai'];
+function locClass(l){l=(l||'').toLowerCase();
+  if(/bangalore|bengaluru/.test(l))return'blr';
+  if(INDIA.some(k=>l.includes(k)))return'india';
+  if(l.includes('remote')||l.includes('online'))return'remote';
+  if(!l||l==='see post')return'other';return'abroad'}
+function key(i){return (i.company||i.source)+'|||'+i.title}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function tierIcon(t){return t==='tier1'?'🔥 ':t==='tier2'?'⭐ ':''}
+function rtLabel(i){return i.kind==='competition'?'Competition':({internship:'Internship',fellowship:'Fellowship',grad:'Early career'})[i.role_type]||'Internship'}
+function pass(i){
+  const q=$('q').value.toLowerCase().trim();
+  if(q&&!(i.title+' '+i.company+' '+i.source+' '+i.location).toLowerCase().includes(q))return false;
+  const rts=[...filters].filter(f=>f.startsWith('rt:'));
+  const rt=i.kind==='competition'?'competition':(i.role_type||'internship');
+  if(rts.length&&!rts.includes('rt:'+rt))return false;
+  if(filters.has('cat:AI/ML')&&i.category!=='AI/ML')return false;
+  if(filters.has('cat:Tech')&&i.category!=='Tech')return false;
+  if(filters.has('tier1')&&i.tier!=='tier1')return false;
+  const lc=locClass(i.location);
+  const locF=[...filters].filter(f=>f.startsWith('loc:'));
+  if(locF.length&&!locF.some(f=>f==='loc:'+lc||(f==='loc:india'&&lc==='blr')))return false;
+  if(filters.has('new')&&!i.new)return false;
+  if(!filters.has('past')&&i.term&&i.term<2027)return false;
+  const k=key(i);
+  if(filters.has('hidden')){if(!hidden[k])return false}
+  else if(hidden[k])return false;
+  if(filters.has('saved')&&!saved[k])return false;
+  if(filters.has('applied')&&!applied[k])return false;
+  return true}
+function groupTitles(items){
+  const m=new Map();
+  for(const i of items){const k=key(i);
+    if(!m.has(k))m.set(k,{...i,_locs:[{location:i.location,url:i.url}]});
+    else{const g=m.get(k);g._locs.push({location:i.location,url:i.url});
+      g.score=Math.max(g.score,i.score);g.new=g.new||i.new;
+      if((i.first_seen||'')>(g.first_seen||''))g.first_seen=i.first_seen}}
+  return[...m.values()]}
+function groupCompanies(roles){
+  const m=new Map();
+  for(const r of roles){const c=r.company||r.source;
+    if(!m.has(c))m.set(c,{company:c,tier:r.tier,roles:[],score:0,anyNew:false,latest:''});
+    const g=m.get(c);g.roles.push(r);g.score=Math.max(g.score,r.score);
+    g.anyNew=g.anyNew||r.new;if((r.first_seen||'')>g.latest)g.latest=r.first_seen||''}
+  for(const g of m.values())g.roles.sort((a,b)=>b.score-a.score);
+  return[...m.values()]}
+let openCos=new Set();
+function render(){
+  const sort=$('sort').value;
+  const flat=DATA.items.filter(pass);
+  let cos=groupCompanies(groupTitles(flat));
+  if(sort==='new')cos.sort((a,b)=>b.latest.localeCompare(a.latest)||b.score-a.score);
+  else if(sort==='az')cos.sort((a,b)=>a.company.localeCompare(b.company));
+  else cos.sort((a,b)=>b.score-a.score);
+  const totRoles=cos.reduce((n,c)=>n+c.roles.length,0);
+  $('count').textContent=cos.length+' companies · '+totRoles+' opportunities ('+flat.length+' postings)';
+  const auto=cos.length<=4;
+  $('cards').innerHTML=cos.map(c=>{
+    const open=auto||openCos.has(c.company)?'open':'';
+    return `<div class="co ${c.tier} ${open}" data-co="${esc(c.company)}">
+    <div class="cohead">
+      <span class="coname">${tierIcon(c.tier)}${esc(c.company)}</span>
+      <span class="cocount">${c.roles.length} role${c.roles.length>1?'s':''}</span>
+      ${c.anyNew?'<span class="conew">NEW</span>':''}
+      <span class="carat">▶</span>
+    </div>
+    <div class="roles">${c.roles.map(r=>{
+      const k=key(r),single=r._locs.length===1;
+      return `<div class="role ${applied[k]?'applied':''}">
+        <div class="main">
+          <a class="t" href="${esc(r._locs[0].url)}" target="_blank" rel="noopener">${esc(r.title)}</a>
+          <div class="rmeta">
+            ${r.new?'<span class="badge b-new">NEW</span>':''}
+            <span class="badge b-type">${rtLabel(r)}</span>
+            <span class="badge ${r.category==='AI/ML'?'b-ml':'b-tech'}">${esc(r.category)}</span>
+            ${r.term?`<span class="badge b-term">${r.term}</span>`:''}
+            ${r.ai_fit!=null?`<span class="badge b-ml" title="${esc(r.ai_why)}">🤖 fit ${r.ai_fit}</span>`:''}
+            ${single?`<span>${esc(r._locs[0].location||'—')}</span>`:`<span>${r._locs.length} locations:</span>`}
+          </div>
+          ${single?'':`<div class="loclist">${r._locs.map(l=>`<a class="locchip" target="_blank" rel="noopener" href="${esc(l.url)}">${esc(l.location||'—')}</a>`).join('')}</div>`}
+        </div>
+        <div class="acts">
+          <button class="ib done ${applied[k]?'on':''}" data-a="applied" data-k="${esc(k)}" title="Mark applied">✓</button>
+          <button class="ib star ${saved[k]?'on':''}" data-a="saved" data-k="${esc(k)}" title="Save">★</button>
+          <button class="ib hide" data-a="hidden" data-k="${esc(k)}" title="Hide forever">✕</button>
+        </div>
+      </div>`}).join('')}</div></div>`}).join('');
+  $('empty').style.display=cos.length?'none':'block';
+  $('empty').textContent=filters.has('saved')?'No saved items — hit ★ on any role.':filters.has('applied')?'Nothing marked applied yet — hit ✓ when you apply.':filters.has('hidden')?'Nothing hidden.':'Nothing matches — clear some filters.';
+  document.querySelectorAll('.cohead').forEach(h=>h.onclick=()=>{
+    const co=h.parentElement.dataset.co;
+    openCos.has(co)?openCos.delete(co):openCos.add(co);
+    h.parentElement.classList.toggle('open')});
+  document.querySelectorAll('.ib').forEach(b=>b.onclick=e=>{
+    e.stopPropagation();const k=b.dataset.k,a=b.dataset.a;
+    const m={saved,applied,hidden}[a];
+    if(m[k]){delete m[k]}else{m[k]=1}
+    persist();render()});
+}
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+  const f=c.dataset.f;if(filters.has(f)){filters.delete(f)}else{filters.add(f)}
+  c.classList.toggle('on');render()});
+$('q').oninput=render;$('sort').onchange=render;
+$('export').onclick=()=>{
+  const rows=[['Company','Title','Type','Field','Term','Location','URL','Saved','Applied']];
+  groupTitles(DATA.items.filter(pass)).forEach(i=>{const k=key(i);
+    rows.push([i.company,i.title,i.kind==='competition'?'Competition':i.role_type,i.category,
+      i.term||'',i._locs.map(l=>l.location).join('; '),i._locs[0].url,
+      saved[k]?'yes':'',applied[k]?'yes':''])});
+  const csv=rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='internship-radar.csv';a.click()};
+fetch('data.json?t='+Date.now()).then(r=>r.json()).then(d=>{
+  DATA=d;
+  const jobs=d.items.filter(i=>i.kind==='job').length,comps=d.items.length-jobs,nw=d.items.filter(i=>i.new).length;
+  $('sub').textContent=`Last scan: ${d.updated} · ${jobs} roles · ${comps} competitions · ${nw} new`;
+  if(d.brief)$('brief').innerHTML=`<div class="brief"><b class="t">🤖 AI brief</b>${esc(d.brief).replace(/\n/g,'<br>')}</div>`;
+  render();
+}).catch(()=>{$('sub').textContent='No data yet — run the "Daily internship scan" workflow once (Actions tab), then refresh.'});
+</script>
+</body>
+</html>
